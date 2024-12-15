@@ -4,8 +4,8 @@ pipeline {
     stage('Jenkins Backup') {
       steps {
         sh '''
-          cd /var/lib
-          zip /var/lib/jenkinsBackup.zip jenkins
+          # Create a tar backup of the Jenkins directory
+          tar -czf /tmp/jenkinsBackup.tar.gz -C /var/lib jenkins
         '''
       }
     }
@@ -13,9 +13,13 @@ pipeline {
     stage('Upload to S3 Bucket') {
       steps {
         script {
+          // Move the tar file to the workspace
+          sh 'mv /tmp/jenkinsBackup.tar.gz ${WORKSPACE}/jenkinsBackup.tar.gz'
+
+          // Upload the tar file from the workspace
           s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [
             [bucket: 'ovia-jenkins-backup', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false,
-            selectedRegion: 'us-east-2', showDirectlyInBrowser: false, sourceFile: '/var/lib/jenkinsBackup.zip', storageClass: 'STANDARD', uploadFromSlave: false,
+            selectedRegion: 'us-east-2', showDirectlyInBrowser: false, sourceFile: '${WORKSPACE}/jenkinsBackup.tar.gz', storageClass: 'STANDARD', uploadFromSlave: false,
             useServerSideEncryption: false]
           ], pluginFailureResultConstraint: 'FAILURE', profileName: 'ovia-jenkins-backup', userMetadata: []
         }
