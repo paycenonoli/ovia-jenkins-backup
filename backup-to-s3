@@ -5,7 +5,7 @@ pipeline{
       steps{
           sh '''
               cd /var/lib
-              zip ${WORKSPACE}/jenkinsBackup.zip jenkins
+              tar -czvf ${WORKSPACE}/jenkinsBackup.tar.gz jenkins
           '''
       }
     
