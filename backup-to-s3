@@ -5,7 +5,7 @@ pipeline {
       steps {
         sh '''
             cd /var/lib
-            tar -zcvf ${WORKSPACE}/jenkinsBackup.tar.gz jenkins
+            tar --ignore-failed-read -zcvf ${WORKSPACE}/jenkinsBackup.tar.gz jenkins
         '''
       }
     }
