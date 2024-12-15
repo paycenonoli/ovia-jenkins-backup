@@ -5,7 +5,7 @@ pipeline{
       steps{
           sh '''
               cd /var/lib
-              zipjenkinsBackup.zip jenkins
+              zip jenkinsBackup.zip jenkins
           '''
       }
     
